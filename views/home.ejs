@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 1500px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-3 sidenav">
+      <h4>Hi <%= data.name %></h4>
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="/">Home</a></li>
+        <li><a href="/logout">Logout</a></li>
+        <!-- <li><a href="#section3">Family</a></li>
+        <li><a href="#section3">Photos</a></li> -->
+      </ul><br>
+    </div>
+
+    <div class="col-sm-9">
+        <div class="col-sm-6 slideanim">
+          <br/>
+          <h1>Send Message</h1>
+          <br/>
+          <form action="/message" method="POST">
+            <div class="col-sm-12 form-group">
+              <input class="form-control" id="mobileNumber" name="mobileNumber" placeholder="10 Digit Mobile Number" type="number" min="6000000000" max="9999999999" required>
+            </div>
+            <div class="col-sm-12 form-group">
+            <textarea class="form-control" minlength="2" maxlength="250" id="message" name="message" placeholder="Write your message" rows="5"></textarea>
+            <input type="hidden" name="isBroadcast" value="no" />
+            </div>
+              <div class="col-sm-12 form-group">
+                <button class="btn btn-default pull-right" type="submit">Send Message</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-sm-6 slideanim">
+            <br/>
+            <h1>Broadcast for Help</h1>
+            <br/>
+            <form action="/message" method="POST">
+              <div class="col-sm-12 form-group">
+                <textarea class="form-control" minlength="2" maxlength="250" id="message" name="message" placeholder="Write your message" rows="5"></textarea>
+                <input type="hidden" name="isBroadcast" value="yes" />
+              </div>
+                <div class="col-sm-12 form-group">
+                  <button class="btn btn-default pull-right" type="submit">Broadcast Message</button>
+              </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 slideanim">
+            <br/>
+            <h1>Make a call request</h1>
+            <br/>
+            <form action="/call" method="POST">
+              <div class="col-sm-12 form-group">
+                  <input class="form-control" id="mobileNumber" name="mobileNumber" placeholder="10 Digit Mobile Number" type="number" min="6000000000" max="9999999999" required>
+                </div>
+                <div class="col-sm-12 form-group">
+                  <button class="btn btn-default pull-right" type="submit">Request for call</button>
+              </div>
+            </form>
+        </div>
+
+        <div  class="col-sm-12 slideanim">
+            <br/>
+            <h1>Message History</h1>
+            <br/>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th>Is Broadcast</th>
+                    <th>From Number</th>
+                    <th>To Number</th>
+                    <th style="width: 40%">Message</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% if(data.messageData.length>0){ for (var i = 0; i < data.messageData.length; i++) { %>
+                      <% if(data.messageData[i].status == "Success") { %>
+                        <tr class="success">
+                            <td><%= data.messageData[i].isBroadcast %></td>
+                            <td><%= data.messageData[i].fromNumber %></td>
+                            <td><%= data.messageData[i].toNumber %></td>
+                            <td><%= data.messageData[i].message %></td>
+                            <td><%= data.messageData[i].createdAt.getDate() %>-<%= data.messageData[i].createdAt.getMonth() %>-<%= data.messageData[i].createdAt.getFullYear() %></td>
+                          </tr>
+                        <% } else{ %>
+                          <tr class="danger">
+                            <td><%= data.messageData[i].isBroadcast %></td>
+                            <td><%= data.messageData[i].fromNumber %></td>
+                            <td><%= data.messageData[i].toNumber %></td>
+                            <td><%= data.messageData[i].message %></td>
+                            <td><%= data.messageData[i].createdAt.getDate() %>-<%= data.messageData[i].createdAt.getMonth() %>-<%= data.messageData[i].createdAt.getFullYear() %></td>
+                          </tr>
+                          <% } %>
+
+                    <% } } else{ %>
+                      <tr>
+                          <td colspan="5" style="text-align:center;">No data found</td>
+                        </tr>
+                      <% } %>
+                </tbody>
+              </table>
+        </div>
+
+        <div  class="col-sm-12 slideanim">
+            <br/>
+            <h1>Call History</h1>
+            <br/>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th>From Number</th>
+                    <th>To Number</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>     
+                  <% if(data.callData.length>0){ for (var i = 0; i < data.callData.length; i++) { %>
+                      <% if(data.callData[i].status == "Success") { %>
+                        <tr class="success">
+                            <td><%= data.callData[i].fromNumber %></td>
+                            <td><%= data.callData[i].toNumber %></td>
+                            <td><%= data.callData[i].createdAt.getDate() %>-<%= data.callData[i].createdAt.getMonth() %>-<%= data.callData[i].createdAt.getFullYear() %></td>
+                          </tr>
+                        <% } else{ %>
+                          <tr class="danger">
+                            <td><%= data.callData[i].fromNumber %></td>
+                            <td><%= data.callData[i].toNumber %></td>
+                            <td><%= data.callData[i].createdAt.getDate() %>-<%= data.callData[i].createdAt.getMonth() %>-<%= data.callData[i].createdAt.getFullYear() %></td>
+                          </tr>
+                          <% } %>
+
+                    <% } } else{ %>
+                      <tr>
+                          <td colspan="3" style="text-align:center;">No data found</td>
+                        </tr>
+                      <% } %>
+                </tbody>
+              </table>
+        </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid">
+  <p> </p>
+</footer>
+
+</body>
+</html>
